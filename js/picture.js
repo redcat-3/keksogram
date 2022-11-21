@@ -1,8 +1,8 @@
 const bodyElement = document.querySelector('body');
 const canselButton = document.querySelector('.big-picture__cancel');
+const picturesElement = document.querySelector('.pictures');
 const templatePictureElement = document.querySelector('#picture').content.querySelector('.picture');
 const fragmentListElements = document.createDocumentFragment();
-const pictureElement = templatePictureElement.cloneNode(true);
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
@@ -27,9 +27,10 @@ function hideModal() {
 }
 
 const createPictureElement = (picture) => {
-  const onPictureClick = () => {
+  const pictureElement = templatePictureElement.cloneNode(true);
+  function onPictureClick () {
     const bigPictureElement = document.querySelector('.big-picture');
-    bigPictureElement.querySelector('.big-picture__img').src = picture.url;
+    bigPictureElement.querySelector('.big-picture__img').querySelector('img').src = picture.url;
     bigPictureElement.querySelector('.likes-count').textContent = picture.likes;
     bigPictureElement.querySelector('.comments-count').textContent = picture.comments.length;
     bigPictureElement.querySelector('.social__caption').textContent = picture.description;
@@ -48,7 +49,7 @@ const createPictureElement = (picture) => {
     bigPictureElement.querySelector('.comments-loader').classList.add('hidden');
     document.addEventListener('keydown', onModalEscKeydown);
     canselButton.addEventListener('click', onCanselButtonClick);
-  };
+  }
 
   pictureElement.querySelector('.picture__img').src = picture.url;
   if (picture.likes) {
@@ -57,9 +58,10 @@ const createPictureElement = (picture) => {
   if (picture.comments) {
     pictureElement.querySelector('.picture__comments').textContent = picture.comments.length;
   }
-  pictureElement.addEventListener('click', onPictureClick());
+
   pictureElement.appendChild(fragmentListElements);
-  return pictureElement;
+  pictureElement.addEventListener('click', onPictureClick);
+  picturesElement.append(pictureElement);
 };
 
 export {createPictureElement};
