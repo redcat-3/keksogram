@@ -1,30 +1,9 @@
-const bodyElement = document.querySelector('body');
-const canselButton = document.querySelector('.big-picture__cancel');
+import {showModal} from './util.js';
+
 const picturesElement = document.querySelector('.pictures');
 const templatePictureElement = document.querySelector('#picture').content.querySelector('.picture');
 const fragmentListElements = document.createDocumentFragment();
-
-const isEscapeKey = (evt) => evt.key === 'Escape';
-
-const onModalEscKeydown = (evt) => {
-  if (isEscapeKey(evt)) {
-    evt.preventDefault();
-    hideModal();
-  }
-};
-
-const onCanselButtonClick = () => {
-  hideModal();
-};
-
-
-function hideModal() {
-  const modalElement = document.querySelector('.big-picture');
-  modalElement.classList.add('hidden');
-  document.removeEventListener('keydown', onModalEscKeydown);
-  canselButton.removeEventListener('click', onCanselButtonClick);
-  bodyElement.style.overflow = 'auto';
-}
+const canselButton = document.querySelector('.big-picture__cancel');
 
 const createPictureElement = (picture) => {
   const pictureElement = templatePictureElement.cloneNode(true);
@@ -44,11 +23,9 @@ const createPictureElement = (picture) => {
       socialComments.appendChild(socialComment);
     });
     bigPictureElement.classList.remove('hidden');
-    bodyElement.classList.add('modal-open');
     bigPictureElement.querySelector('.social__comment-count').classList.add('hidden');
     bigPictureElement.querySelector('.comments-loader').classList.add('hidden');
-    document.addEventListener('keydown', onModalEscKeydown);
-    canselButton.addEventListener('click', onCanselButtonClick);
+    showModal(canselButton);
   }
 
   pictureElement.querySelector('.picture__img').src = picture.url;

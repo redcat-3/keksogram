@@ -1,3 +1,5 @@
+const bodyElement = document.querySelector('body');
+
 const getRandomNumber = (min, max) => {
   if (min < 0 || max < 0) {
     return NaN;
@@ -77,4 +79,43 @@ const createPhotoDescription = (number) => {
   return photoDescription;
 };
 
-export {createPhotoDescription, checkStringLength};
+const isEscapeKey = (evt) => evt.key === 'Escape';
+
+const onModalEscKeydown = (evt) => {
+  if (isEscapeKey(evt)) {
+    evt.preventDefault();
+    hideModal();
+  }
+};
+
+const onCanselButtonClick = () => {
+  hideModal();
+};
+
+
+function hideModal() {
+  let canselButton;
+  let modalElement = document.querySelector('.big-picture');
+  if (!modalElement.classList.contains('hidden')) {
+    canselButton = document.querySelector('.big-picture__cancel');
+  } else {
+    modalElement = document.querySelector('.img-upload__overlay');
+    if (!modalElement.classList.contains('hidden')) {
+      canselButton = document.querySelector('#upload-cancel');
+    }
+  }
+
+  modalElement.classList.add('hidden');
+  document.removeEventListener('keydown', onModalEscKeydown);
+  canselButton.removeEventListener('click', onCanselButtonClick);
+  bodyElement.style.overflow = 'auto';
+  bodyElement.classList.remove('modal-open');
+}
+
+const showModal = (canselButton) => {
+  bodyElement.classList.add('modal-open');
+  document.addEventListener('keydown', onModalEscKeydown);
+  canselButton.addEventListener('click', onCanselButtonClick);
+};
+
+export {createPhotoDescription, checkStringLength, isEscapeKey, onModalEscKeydown, onCanselButtonClick, showModal};
