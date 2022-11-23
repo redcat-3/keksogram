@@ -102,13 +102,12 @@ function hideModal() {
     modalElement = document.querySelector('.img-upload__overlay');
     if (!modalElement.classList.contains('hidden')) {
       canselButton = document.querySelector('#upload-cancel');
+      document.querySelector('#upload-file').value = '';
     }
   }
-
   modalElement.classList.add('hidden');
   document.removeEventListener('keydown', onModalEscKeydown);
   canselButton.removeEventListener('click', onCanselButtonClick);
-  bodyElement.style.overflow = 'auto';
   bodyElement.classList.remove('modal-open');
 }
 
