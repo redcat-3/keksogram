@@ -1,13 +1,12 @@
-import {showModal} from './util.js';
+import {onUploadChange} from './util.js';
 
 const SEPARATOR = ' ';
 
 const uploadFormElement = document.querySelector('#upload-select-image');
 const uploadFileElement = uploadFormElement.querySelector('#upload-file');
-const uploadOverlayElement = uploadFormElement.querySelector('.img-upload__overlay');
-const canselButtonElement = uploadFormElement.querySelector('#upload-cancel');
 const hashtagElement = uploadFormElement.querySelector('.text__hashtags');
 const submitButtonElement = uploadFormElement.querySelector('.img-upload__submit');
+
 
 const hashtag = /^#[a-zа-яё0-9]{1,19}/i;
 
@@ -40,11 +39,6 @@ pristine.addValidator(
   validateHashtag,
   'Неправильный хэш-тег'
 );
-
-const onUploadChange = () => {
-  uploadOverlayElement.classList.remove('hidden');
-  showModal(canselButtonElement);
-};
 
 const setUploadChange = () => {
   uploadFileElement.addEventListener('change', onUploadChange);
