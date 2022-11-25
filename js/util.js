@@ -85,9 +85,10 @@ const createPhotoDescription = (number) => {
 };
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
+const checkForFocus = () => document.activeElement === hashtagElement || document.activeElement === textareaElement;
 
 const onModalEscKeydown = (evt) => {
-  if (isEscapeKey(evt)) {
+  if (isEscapeKey(evt) && !checkForFocus()) {
     evt.preventDefault();
     hideModal();
   }
@@ -95,16 +96,6 @@ const onModalEscKeydown = (evt) => {
 
 const onCanselButtonClick = () => {
   hideModal();
-};
-
-const onTextFocus = () => {
-  document.addEventListener('keydown', (evt) => {
-    if (isEscapeKey(evt)) {
-      evt.preventDefault();
-      evt.stopPropagation();
-      console.log(4);
-    }
-  });
 };
 
 function hideModal() {
@@ -117,8 +108,6 @@ function hideModal() {
     if (!modalElement.classList.contains('hidden')) {
       canselButton = document.querySelector('#upload-cancel');
       document.querySelector('#upload-file').value = '';
-      textareaElement.removeEventListener('focus', onTextFocus);
-      hashtagElement.removeEventListener('focus', onTextFocus);
     }
   }
   modalElement.classList.add('hidden');
@@ -136,8 +125,6 @@ const showModal = (canselButton) => {
 const onUploadChange = () => {
   uploadOverlayElement.classList.remove('hidden');
   showModal(canselButtonElement);
-  textareaElement.addEventListener('focus', onTextFocus);
-  hashtagElement.addEventListener('focus', onTextFocus);
 };
 
 export {createPhotoDescription, checkStringLength, isEscapeKey, onModalEscKeydown, onCanselButtonClick, showModal, onUploadChange};
