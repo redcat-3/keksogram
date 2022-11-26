@@ -1,44 +1,41 @@
-import {showModal} from './util.js';
+import {showBigPicture} from './big-picture.js';
 
-const picturesElement = document.querySelector('.pictures');
-const templatePictureElement = document.querySelector('#picture').content.querySelector('.picture');
-const fragmentListElements = document.createDocumentFragment();
-const canselButton = document.querySelector('.big-picture__cancel');
+const pictureTemplateElement = document.querySelector('#picture')
+  .content
+  .querySelector('.picture');
+const imageFiltersElement = document.querySelector('.img-filters');
 
-const createPictureElement = (picture) => {
-  const pictureElement = templatePictureElement.cloneNode(true);
-  function onPictureClick () {
-    const bigPictureElement = document.querySelector('.big-picture');
-    bigPictureElement.querySelector('.big-picture__img').querySelector('img').src = picture.url;
-    bigPictureElement.querySelector('.likes-count').textContent = picture.likes;
-    bigPictureElement.querySelector('.comments-count').textContent = picture.comments.length;
-    bigPictureElement.querySelector('.social__caption').textContent = picture.description;
-    const socialComments = bigPictureElement.querySelector('.social__comments');
-    const socialComment = socialComments.querySelector('.social__comment');
-    socialComments.innerHTML = '';
-    picture.comments.forEach((comment) => {
-      socialComment.querySelector('.social__picture').src = comment.avatar;
-      socialComment.querySelector('.social__picture').alt = comment.name;
-      socialComment.querySelector('.social__text').textContent = comment.message;
-      socialComments.appendChild(socialComment);
-    });
-    bigPictureElement.classList.remove('hidden');
-    bigPictureElement.querySelector('.social__comment-count').classList.add('hidden');
-    bigPictureElement.querySelector('.comments-loader').classList.add('hidden');
-    showModal(canselButton);
+const clearPictures = () => {
+  const pictureElements = document.querySelectorAll('.picture');
+  if (pictureElements.length > 0) {
+    pictureElements.forEach((picture) => picture.remove());
   }
-
-  pictureElement.querySelector('.picture__img').src = picture.url;
-  if (picture.likes) {
-    pictureElement.querySelector('.picture__likes').textContent = picture.likes;
-  }
-  if (picture.comments) {
-    pictureElement.querySelector('.picture__comments').textContent = picture.comments.length;
-  }
-
-  pictureElement.appendChild(fragmentListElements);
-  pictureElement.addEventListener('click', onPictureClick);
-  picturesElement.append(pictureElement);
 };
 
-export {createPictureElement};
+const createPicture = ({url, description, comments, likes}) => {
+  const pictureElement = pictureTemplateElement.cloneNode(true);
+
+  pictureElement.querySelector('.picture__img').src = url;
+  pictureElement.querySelector('.picture__img').alt = description;
+  pictureElement.querySelector('.picture__comments').textContent = `${comments.length}`;
+  pictureElement.querySelector('.picture__likes').textContent = likes;
+
+  pictureElement.addEventListener('click', () => {
+    showBigPicture({url, description, comments, likes});
+  });
+
+  return pictureElement;
+};
+
+const container = document.querySelector('.pictures');
+
+const showPictures = (pictures) => {
+  clearPictures();
+  pictures.forEach((picture) => {
+    const pictureElement = createPicture(picture);
+    container.append(pictureElement);
+    imageFiltersElement.classList.remove('img-filters--inactive');
+  });
+};
+
+export {showPictures};
