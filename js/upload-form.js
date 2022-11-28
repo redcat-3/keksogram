@@ -1,13 +1,17 @@
 import {onUploadChange} from './util.js';
+import { sendData } from './api.js';
 
 const SEPARATOR = ' ';
 const MAX_COUNT_HASHTAGS = 5;
 const MAX_LENGTH_HASHTAG = 20;
 
+
+const bodyElement = document.querySelector('body');
 const uploadFormElement = document.querySelector('#upload-select-image');
 const uploadFileElement = uploadFormElement.querySelector('#upload-file');
 const hashtagElement = uploadFormElement.querySelector('.text__hashtags');
 const submitButtonElement = uploadFormElement.querySelector('.img-upload__submit');
+const uploadOverlayElement = uploadFormElement .querySelector('.img-upload__overlay');
 const simbolHashtag = /^#[a-zа-яё0-9]{1,19}/i;
 
 const checkValidHashtag = (hashtag) => simbolHashtag.test(hashtag);
@@ -68,20 +72,41 @@ const unblockSubmitButton = () => {
   submitButtonElement.textContent = 'Сохранить';
 };
 
-const setOnFormSubmit = () => {
-  uploadFormElement.addEventListener('submit', async (evt) => {
+const hideForm = () => {
+  uploadFormElement.reset();
+  pristine.reset();
+  uploadOverlayElement .classList.add('hidden');
+  bodyElement .classList.remove('modal-open');
+};
+
+const showForm = () => {
+  uploadOverlayElement.classList.remove('hidden');
+  bodyElement.classList.add('modal-open');
+  document.addEventListener('keydown', onEscKeyDown);
+  getDefaultValue();
+  resetEffects();
+};
+
+const onFileInputChange = () => {
+  showForm();
+};
+
+const oncloselButtonClick = () => {
+  hideForm ();
+};
+
+
+const setOnFormSubmit = (cb) => {
+  uploadFormElement.addEventListener('submit', (evt) => {
     evt.preventDefault();
     const isValid = pristine.validate();
 
     if (isValid) {
       blockSubmitButton();
-      //await cb (new FormData(evt.target));
-
+      cb (new FormData(evt.target));
       unblockSubmitButton();
     }
-    uploadFileElement.value = '';
   });
 };
 
-
-export {setUploadChange, setOnFormSubmit};
+export {setUploadChange, setOnFormSubmit, hideForm};
