@@ -53,11 +53,14 @@ const EFFECTS = [
   },
 ];
 
-const filterRangeElement = document.querySelector('.effect-level__slider');
-const filterInputElement = document.querySelector('.effect-level__value');
-const effectLevelBoxElement = document.querySelector('.img-upload__effect-level');
 const formUploadElement = document.querySelector('.img-upload__form');
-const filterPreviewElement = document.querySelector('.img-upload__preview img');
+const filterRangeElement = formUploadElement.querySelector('.effect-level__slider');
+const filterInputElement = formUploadElement.querySelector('.effect-level__value');
+const effectLevelBoxElement = formUploadElement.querySelector('.img-upload__effect-level');
+const filterPreviewElement = formUploadElement.querySelector('.img-upload__preview');
+const effectsElements = formUploadElement.querySelectorAll('.effects__radio');
+const imageElement = filterPreviewElement.querySelector('img');
+
 const effectsClass = 'effects__preview--';
 
 const noneEffect = EFFECTS[0];
@@ -85,6 +88,11 @@ const updateSlider = () => {
     step: chosenEffect.step,
     start: chosenEffect.max,
   });
+  filterRangeElement.noUiSlider.on('update', () => {
+    filterInputElement.value = filterRangeElement.noUiSlider.get();
+    filterPreviewElement.style.filter = `${chosenEffect.filter}(${filterInputElement.value}${chosenEffect.unit})`;
+  }
+  );
 };
 
 function isDefault () {
@@ -101,20 +109,27 @@ const resetEffects = () => {
   updateSlider();
 };
 
+const onChangeEffect = () => {
+  effectsElements.forEach((effectsElement) => {
+    effectsElement.addEventListener('change', (evt) => {
+      const effectsID = evt.target.value;
+      filterPreviewElement.classList.add(`${effectsClass}${effectsID}`);
+      chosenEffect = EFFECTS.find((effect) => effect.name === effectsID);
+      filterPreviewElement.style.filter = `${chosenEffect.filter}(${filterInputElement.value}${chosenEffect.unit})`;
+      imageElement.style.filter = `${chosenEffect.filter}(${filterInputElement.value}${chosenEffect.unit})`;
+      updateSlider();
+    });
+  });
+};
+
 formUploadElement.addEventListener('change', (event) => {
   if (event.target.classList.contains('effects__radio')) {
-    filterPreviewElement.className = 'img-upload__preview';
     const effectsID = event.target.value;
     filterPreviewElement.classList.add(`${effectsClass}${effectsID}`);
+    imageElement.style.filter = `${chosenEffect.filter}(${filterInputElement.value}${chosenEffect.unit})`;
     chosenEffect = EFFECTS.find((effect) => effect.name === effectsID);
     updateSlider();
   }
 });
 
-filterRangeElement.noUiSlider.on('update', () => {
-  filterInputElement.value = filterRangeElement.noUiSlider.get();
-  filterPreviewElement.style.filter = `${chosenEffect.filter}(${filterInputElement.value}${chosenEffect.unit})`;
-}
-);
-
-export {resetEffects};
+export {resetEffects, onChangeEffect};

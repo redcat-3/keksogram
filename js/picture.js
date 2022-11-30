@@ -3,7 +3,6 @@ import {showBigPicture} from './big-picture.js';
 const pictureTemplateElement = document.querySelector('#picture')
   .content
   .querySelector('.picture');
-const imageFiltersElement = document.querySelector('.img-filters');
 
 const clearPictures = () => {
   const pictureElements = document.querySelectorAll('.picture');
@@ -34,8 +33,7 @@ const showPictures = (pictures) => {
   pictures.forEach((picture) => {
     const pictureElement = createPicture(picture);
     container.append(pictureElement);
-    imageFiltersElement.classList.remove('img-filters--inactive');
   });
 };
 
-export {showPictures};
+export {showPictures, clearPictures};

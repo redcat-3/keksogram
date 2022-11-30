@@ -1,35 +1,39 @@
-import { showSuccessMessage, showUploadErrorMessage } from './util.js';
-import { hideForm } from './upload-form.js';
-
-const getData = (onSuccess, onFail) => {
-  fetch('https://27.javascript.pages.academy/kekstagram/data')
-    .then((response) => response.json())
-    .then((photos) => {
-      onSuccess(photos);
-    })
-    .catch(() => onFail('Произошла ошибка при загрузки данных'));
+const Link = {
+  GETTING_DATA: 'https://27.javascript.pages.academy/kekstagram/data',
+  SENDING_DATA: 'https://27.javascript.pages.academy/kekstagram',
 };
 
-const sendData = (data) => {
-  fetch(
-    'https://27.javascript.pages.academy/kekstagram',
-    {
-      method: 'POST',
-      body: data,
-    },
-  ) .then((response) => {
-    if (response.ok) {
-      return response.json();
+const getData = async (onSuccess, onFail) => {
+  try {
+    const response = await fetch(Link.GETTING_DATA);
+    if (!response.ok) {
+      throw new Error ('Не удалось загрузить объявления');
     }
-    throw new Error(`${response.status} ${response.statusText}`);
-  })
-    .then(() => {
-      showSuccessMessage();
-      hideForm();
-    })
-    .catch(() => {
-      showUploadErrorMessage();
-    });
+
+    const photos = await response.json();
+    onSuccess(photos);
+  } catch (error) {
+    onFail(error.message);
+  }
 };
 
-export { getData, sendData };
+const sendData = async (onSuccess, onFail, body) => {
+  try {
+    const response = await fetch(
+      Link.SENDING_DATA,
+      {
+        method: 'POST',
+        body,
+      },
+    );
+    if (!response.ok) {
+      throw new Error ('Не удалось отправить данные');
+    }
+
+    onSuccess();
+  } catch (error) {
+    onFail(error.message);
+  }
+};
+
+export {getData, sendData};

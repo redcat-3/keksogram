@@ -1,17 +1,20 @@
-import {onUploadChange} from './util.js';
-import { sendData } from './api.js';
+import {showModal} from './util.js';
 
 const SEPARATOR = ' ';
 const MAX_COUNT_HASHTAGS = 5;
 const MAX_LENGTH_HASHTAG = 20;
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 
-
-const bodyElement = document.querySelector('body');
 const uploadFormElement = document.querySelector('#upload-select-image');
 const uploadFileElement = uploadFormElement.querySelector('#upload-file');
 const hashtagElement = uploadFormElement.querySelector('.text__hashtags');
 const submitButtonElement = uploadFormElement.querySelector('.img-upload__submit');
-const uploadOverlayElement = uploadFormElement .querySelector('.img-upload__overlay');
+const uploadOverlayElement = uploadFormElement.querySelector('.img-upload__overlay');
+const previewElement = uploadFormElement.querySelector('.img-upload__preview');
+const canselButtonElement = uploadFormElement.querySelector('.img-upload__cancel');
+const effectsPreviewElements = uploadFormElement.querySelectorAll('.effects__preview');
+
+
 const simbolHashtag = /^#[a-zа-яё0-9]{1,19}/i;
 
 const checkValidHashtag = (hashtag) => simbolHashtag.test(hashtag);
@@ -58,6 +61,24 @@ pristine.addValidator(hashtagElement, validateTags, `Хэштег должен �
 pristine.addValidator(hashtagElement, validateTagCountHashtag, `Разрешено использовать не более ${MAX_COUNT_HASHTAGS} хэштегов.`);
 pristine.addValidator(hashtagElement, validateTagDouble, 'Хэштеги не должны дублироваться');
 
+const onUploadChange = () => {
+  uploadOverlayElement.classList.remove('hidden');
+  showModal(canselButtonElement);
+  const filePhoto = uploadFileElement.files[0];
+  const filePhotoName = filePhoto.name.toLowerCase();
+  const matches = FILE_TYPES.some((it) => filePhotoName.endsWith(it));
+  if (matches) {
+    previewElement.innerHTML = '';
+    const imageElement = document.createElement('img');
+    imageElement.src = URL.createObjectURL(filePhoto);
+    imageElement.style.maxWidth = '100%';
+    previewElement.append(imageElement);
+    effectsPreviewElements.forEach((effectsPreviewElement) => {
+      effectsPreviewElement.style.backgroundImage = `url("${URL.createObjectURL(filePhoto)}")`;
+    });
+  }
+};
+
 const setUploadChange = () => {
   uploadFileElement.addEventListener('change', onUploadChange);
 };
@@ -70,29 +91,6 @@ const blockSubmitButton = () => {
 const unblockSubmitButton = () => {
   submitButtonElement.disabled = false;
   submitButtonElement.textContent = 'Сохранить';
-};
-
-const hideForm = () => {
-  uploadFormElement.reset();
-  pristine.reset();
-  uploadOverlayElement .classList.add('hidden');
-  bodyElement .classList.remove('modal-open');
-};
-
-const showForm = () => {
-  uploadOverlayElement.classList.remove('hidden');
-  bodyElement.classList.add('modal-open');
-  document.addEventListener('keydown', onEscKeyDown);
-  getDefaultValue();
-  resetEffects();
-};
-
-const onFileInputChange = () => {
-  showForm();
-};
-
-const oncloselButtonClick = () => {
-  hideForm ();
 };
 
 
@@ -109,4 +107,4 @@ const setOnFormSubmit = (cb) => {
   });
 };
 
-export {setUploadChange, setOnFormSubmit, hideForm};
+export {setUploadChange, setOnFormSubmit};
