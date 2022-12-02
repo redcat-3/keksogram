@@ -148,12 +148,9 @@ const sortDiscussed = (photos) => photos.slice().sort(comparePhotos);
 export {checkStringLength,
   isEscapeKey,
   getRandomArray,
-  onModalEscKeydown,
-  onCanselButtonClick,
   showModal,
   showSuccessMessage,
   showUploadErrorMessage,
-  hideModal,
   showAlert,
   sortDiscussed,
   debounce

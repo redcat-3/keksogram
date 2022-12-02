@@ -9,7 +9,6 @@ const commentsBlockElement = bigPictureElement.querySelector('.social__comment-c
 const commentsLoaderElement = bigPictureElement.querySelector('.comments-loader');
 const commentListElement = bigPictureElement.querySelector('.social__comments');
 const uploadFormElement = document.querySelector('#upload-select-image');
-
 const textareaElement = uploadFormElement.querySelector('.text__description');
 const hashtagElement = uploadFormElement.querySelector('.text__hashtags');
 
